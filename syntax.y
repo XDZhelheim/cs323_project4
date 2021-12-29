@@ -2,7 +2,7 @@
     #include "lex.yy.c"
     #include <string.h>
     #define YYSTYPE TreeNode *
-    #include "CodeGenerator.hpp"
+    #include "AssemblyGenerator.hpp"
     void yyerror(const char*);
 %}
 
@@ -193,7 +193,7 @@ int main(int argc, char **argv){
         else
         {
             fclose(output_file);
-            generateIntermidiateCode(file_path);
+            generateAssemblyCode(file_path);
         }
         return 0;
     } else{

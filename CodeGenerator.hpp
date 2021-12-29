@@ -1,6 +1,6 @@
 #ifndef CODE_GENERTOR_HPP
 #define CODE_GENERTOR_HPP
-#define DEBUG 1
+#define DEBUG 0
 #define DISABLE_SIMPLIFY 0
 
 #include "NodeAnalyser.hpp"
@@ -1158,22 +1158,22 @@ public:
     }
 };
 
-void generateIntermidiateCode(char *file_path)
+string generateIntermidiateCode(char *file_path)
 {
-    string path = file_path;
-    string p2_path = "/dev/stdout";
-    string p3_path = "/dev/stdout";
-    if (path.substr(path.length() - 4) == ".spl")
-    {
-        p2_path = path.substr(0, path.length() - 4) + ".out";
-        p3_path = path.substr(0, path.length() - 4) + ".ir";
-    }
     function_init();
-    Analyser(root, p2_path).analyze();
+    analysisTreeNode(file_path);
     if (!has_error)
     {
-        Generator(root, p3_path).generate();
+        string path = file_path;
+        string out_path = "/dev/stdout";
+        if (path.substr(path.length() - 4) == ".spl")
+        {
+            out_path = path.substr(0, path.length() - 4) + ".ir";
+        }
+        Generator(root, out_path).generate();
+        return out_path;
     }
+    return "";
 }
 
 #endif
