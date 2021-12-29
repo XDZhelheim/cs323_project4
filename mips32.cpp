@@ -15,6 +15,40 @@ struct RegDesc regs[NUM_REGS];
 
 set<string> vars_set;
 
+void _mips_printf(const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(fd, fmt, args);
+    va_end(args);
+    fputs("\n", fd);
+}
+
+void _mips_iprintf(const char *fmt, ...)
+{
+    va_list args;
+    fputs("  ", fd); // `iprintf` stands for indented printf
+    va_start(args, fmt);
+    vfprintf(fd, fmt, args);
+    va_end(args);
+    fputs("\n", fd);
+}
+
+inline void alloc_var(string var) {
+    _mips_printf("_%s: .word 0", var.c_str());
+}
+
+void gen_var_allocation() {
+    for (auto var : vars_set) {
+        alloc_var(var);
+    }
+}
+
+inline void store_var(string var) {
+    assert(var == regs[t0].var);
+    _mips_iprintf("sw %s, _%s", var.c_str(), var.c_str());
+}
+
 Register get_register(tac_opd *opd)
 {
     static bool flag = 0;
@@ -43,40 +77,6 @@ Register get_register_w(tac_opd *opd)
 void spill_register(Register reg)
 {
     // TODO spill reg
-}
-
-void gen_var_allocation() {
-    for (auto var : vars_set) {
-        alloc_var(var);
-    }
-}
-
-inline void alloc_var(string var) {
-    _mips_printf("_%s: .word 0", var.c_str());
-}
-
-void store_var(string var) {
-    assert(var == regs[t0].var);
-    _mips_iprintf("sw %s, _%s", var.c_str(), var.c_str());
-}
-
-void _mips_printf(const char *fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    vfprintf(fd, fmt, args);
-    va_end(args);
-    fputs("\n", fd);
-}
-
-void _mips_iprintf(const char *fmt, ...)
-{
-    va_list args;
-    fputs("  ", fd); // `iprintf` stands for indented printf
-    va_start(args, fmt);
-    vfprintf(fd, fmt, args);
-    va_end(args);
-    fputs("\n", fd);
 }
 
 /* PARAM: a pointer to `struct tac_node` instance
@@ -278,36 +278,77 @@ tac *emit_goto(tac *goto_)
 tac *emit_iflt(tac *iflt)
 {
     /* TODO emit function */
+    Register x, y;
+
+    x = get_register(_tac_quadruple(iflt).c1);
+    y = get_register(_tac_quadruple(iflt).c2);
+    _mips_iprintf("blt %s, %s, label%d", _reg_name(x), _reg_name(y), _tac_quadruple(iflt).labelno->int_val);
+
     return iflt->next;
 }
 
 tac *emit_ifle(tac *ifle)
 {
     /* TODO emit function */
+
+    Register x, y;
+
+    x = get_register(_tac_quadruple(ifle).c1);
+    y = get_register(_tac_quadruple(ifle).c2);
+    _mips_iprintf("ble %s, %s, label%d", _reg_name(x), _reg_name(y), _tac_quadruple(ifle).labelno->int_val);
+
     return ifle->next;
 }
 
 tac *emit_ifgt(tac *ifgt)
 {
     /* TODO emit function */
+
+    Register x, y;
+
+    x = get_register(_tac_quadruple(ifgt).c1);
+    y = get_register(_tac_quadruple(ifgt).c2);
+    _mips_iprintf("bgt %s, %s, label%d", _reg_name(x), _reg_name(y), _tac_quadruple(ifgt).labelno->int_val);
+
     return ifgt->next;
 }
 
 tac *emit_ifge(tac *ifge)
 {
     /* TODO emit function */
+
+    Register x, y;
+
+    x = get_register(_tac_quadruple(ifge).c1);
+    y = get_register(_tac_quadruple(ifge).c2);
+    _mips_iprintf("bge %s, %s, label%d", _reg_name(x), _reg_name(y), _tac_quadruple(ifge).labelno->int_val);
+
     return ifge->next;
 }
 
 tac *emit_ifne(tac *ifne)
 {
     /* TODO emit function */
+
+    Register x, y;
+
+    x = get_register(_tac_quadruple(ifne).c1);
+    y = get_register(_tac_quadruple(ifne).c2);
+    _mips_iprintf("bne %s, %s, label%d", _reg_name(x), _reg_name(y), _tac_quadruple(ifne).labelno->int_val);
+
     return ifne->next;
 }
 
 tac *emit_ifeq(tac *ifeq)
 {
     /* TODO emit function */
+
+    Register x, y;
+
+    x = get_register(_tac_quadruple(ifeq).c1);
+    y = get_register(_tac_quadruple(ifeq).c2);
+    _mips_iprintf("beq %s, %s, label%d", _reg_name(x), _reg_name(y), _tac_quadruple(ifeq).labelno->int_val);
+
     return ifeq->next;
 }
 
@@ -315,12 +356,6 @@ tac *emit_return(tac *return_)
 {
     /* TODO emit function */
     return return_->next;
-}
-
-tac *emit_dec(tac *dec)
-{
-    /* NO NEED TO IMPLEMENT */
-    return dec->next;
 }
 
 tac *emit_arg(tac *arg)
@@ -339,6 +374,12 @@ tac *emit_param(tac *param)
 {
     /* TODO emit function */
     return param->next;
+}
+
+tac *emit_dec(tac *dec)
+{
+    /* NO NEED TO IMPLEMENT */
+    return dec->next;
 }
 
 tac *emit_read(tac *read)
