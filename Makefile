@@ -18,7 +18,6 @@ splc: .lex .syntax
 trash:
 	@rm -rf lex.yy.c syntax.tab.* syntax.output
 clean:
-	@rm -rf bin sample/*.ir sample/*.out test/*.ir test/*.out irsim.log
+	@rm -rf bin sample/*.ir sample/*.s sample/*.out test/*.ir test/*.s test/*.out
 	@rm -rf lex.yy.c syntax.tab.* syntax.output
-	@rm -rf test/*.cui
 all: splc
