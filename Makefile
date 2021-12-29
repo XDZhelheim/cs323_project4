@@ -14,7 +14,7 @@ BISON=bison
 .syntax: syntax.y
 	$(BISON) -v -t -d syntax.y
 splc: .lex .syntax
-	mkdir -p bin && $(CXX) syntax.tab.c -o bin/splc $(CXXFLAGS)
+	mkdir -p bin && $(CXX) syntax.tab.c tac.cpp mips32.cpp -o bin/splc $(CXXFLAGS)  
 trash:
 	@rm -rf lex.yy.c syntax.tab.* syntax.output
 clean:
