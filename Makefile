@@ -1,5 +1,5 @@
 ifeq ($(shell uname), Darwin) # macOS
-	CXXFLAGS=-ll -ly --std=c++11
+	CXXFLAGS=-ll -ly --std=c++11 -mmacosx-version-min=12.1
 else
 	CXXFLAGS=-lfl -ly --std=c++11
 endif
