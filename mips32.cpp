@@ -1,34 +1,63 @@
-#include "mips32.h"
+#include "mips32.hpp"
+#include <set>
+
+#define _tac_kind(tac) (((tac)->code).kind)
+#define _tac_quadruple(tac) (((tac)->code).tac)
+#define _reg_name(reg) regs[reg].name.c_str()
+
+using std::set;
 
 /* the output file descriptor, may not be explicitly used */
 FILE *fd;
 
 struct RegDesc regs[NUM_REGS];
-struct VarDesc *vars;
+// struct VarDesc *vars;
 
-#define _tac_kind(tac) (((tac)->code).kind)
-#define _tac_quadruple(tac) (((tac)->code).tac)
-#define _reg_name(reg) regs[reg].name
+set<string> vars_set;
 
 Register get_register(tac_opd *opd)
 {
+    static bool flag = 0;
     assert(opd->kind == tac_opd::OP_VARIABLE);
     char *var = opd->char_val;
-    /* COMPLETE the register allocation */
-    return t0;
+
+    flag = !flag;
+    Register r = flag ? t1 : t2;
+    regs[r].var = var;
+
+    return r;
 }
 
 Register get_register_w(tac_opd *opd)
 {
     assert(opd->kind == tac_opd::OP_VARIABLE);
     char *var = opd->char_val;
-    /* COMPLETE the register allocation (for write) */
-    return s0;
+
+    vars_set.insert(var);
+
+    regs[t0].var = var;
+
+    return t0;
 }
 
 void spill_register(Register reg)
 {
-    /* COMPLETE the register spilling */
+    // TODO spill reg
+}
+
+void gen_var_allocation() {
+    for (auto var : vars_set) {
+        alloc_var(var);
+    }
+}
+
+inline void alloc_var(string var) {
+    _mips_printf("_%s: .word 0", var.c_str());
+}
+
+void store_var(string var) {
+    assert(var == regs[t0].var);
+    _mips_iprintf("sw %s, _%s", var.c_str(), var.c_str());
 }
 
 void _mips_printf(const char *fmt, ...)
@@ -80,6 +109,7 @@ tac *emit_assign(tac *assign)
         y = get_register(_tac_quadruple(assign).right);
         _mips_iprintf("move %s, %s", _reg_name(x), _reg_name(y));
     }
+    store_var(regs[x].var);
     return assign->next;
 }
 
@@ -110,6 +140,7 @@ tac *emit_add(tac *add)
                       _reg_name(y),
                       _reg_name(z));
     }
+    store_var(regs[x].var);
     return add->next;
 }
 
@@ -141,6 +172,7 @@ tac *emit_sub(tac *sub)
                       _reg_name(y),
                       _reg_name(z));
     }
+    store_var(regs[x].var);
     return sub->next;
 }
 
@@ -171,6 +203,7 @@ tac *emit_mul(tac *mul)
     _mips_iprintf("mul %s, %s, %s", _reg_name(x),
                   _reg_name(y),
                   _reg_name(z));
+    store_var(regs[x].var);
     return mul->next;
 }
 
@@ -200,6 +233,7 @@ tac *emit_div(tac *div)
     }
     _mips_iprintf("div %s, %s", _reg_name(y), _reg_name(z));
     _mips_iprintf("mflo %s", _reg_name(x));
+    store_var(regs[x].var);
     return div->next;
 }
 
@@ -210,6 +244,7 @@ tac *emit_addr(tac *addr)
     x = get_register_w(_tac_quadruple(addr).left);
     y = get_register(_tac_quadruple(addr).right);
     _mips_iprintf("move %s, %s", _reg_name(x), _reg_name(y));
+    store_var(regs[x].var);
     return addr->next;
 }
 
@@ -220,6 +255,7 @@ tac *emit_fetch(tac *fetch)
     x = get_register_w(_tac_quadruple(fetch).left);
     y = get_register(_tac_quadruple(fetch).raddr);
     _mips_iprintf("lw %s, 0(%s)", _reg_name(x), _reg_name(y));
+    store_var(regs[x].var);
     return fetch->next;
 }
 
@@ -241,43 +277,43 @@ tac *emit_goto(tac *goto_)
 
 tac *emit_iflt(tac *iflt)
 {
-    /* COMPLETE emit function */
+    /* TODO emit function */
     return iflt->next;
 }
 
 tac *emit_ifle(tac *ifle)
 {
-    /* COMPLETE emit function */
+    /* TODO emit function */
     return ifle->next;
 }
 
 tac *emit_ifgt(tac *ifgt)
 {
-    /* COMPLETE emit function */
+    /* TODO emit function */
     return ifgt->next;
 }
 
 tac *emit_ifge(tac *ifge)
 {
-    /* COMPLETE emit function */
+    /* TODO emit function */
     return ifge->next;
 }
 
 tac *emit_ifne(tac *ifne)
 {
-    /* COMPLETE emit function */
+    /* TODO emit function */
     return ifne->next;
 }
 
 tac *emit_ifeq(tac *ifeq)
 {
-    /* COMPLETE emit function */
+    /* TODO emit function */
     return ifeq->next;
 }
 
 tac *emit_return(tac *return_)
 {
-    /* COMPLETE emit function */
+    /* TODO emit function */
     return return_->next;
 }
 
@@ -289,19 +325,19 @@ tac *emit_dec(tac *dec)
 
 tac *emit_arg(tac *arg)
 {
-    /* COMPLETE emit function */
+    /* TODO emit function */
     return arg->next;
 }
 
 tac *emit_call(tac *call)
 {
-    /* COMPLETE emit function */
+    /* TODO emit function */
     return call->next;
 }
 
 tac *emit_param(tac *param)
 {
-    /* COMPLETE emit function */
+    /* TODO emit function */
     return param->next;
 }
 
@@ -429,8 +465,8 @@ void mips32_gen(tac *head, FILE *_fd)
     regs[sp].name = "$sp";
     regs[fp].name = "$fp";
     regs[ra].name = "$ra";
-    vars = (struct VarDesc *)malloc(sizeof(struct VarDesc));
-    vars->next = NULL;
+    // vars = (struct VarDesc *)malloc(sizeof(struct VarDesc));
+    // vars->next = NULL;
     fd = _fd;
     emit_code(head);
 }

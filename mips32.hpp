@@ -1,7 +1,10 @@
-#ifndef MIPS_H
-#define MIPS_H
+#ifndef MIPS_HPP
+#define MIPS_HPP
 
 #include "tac.h"
+#include <string>
+
+using std::string;
 
 typedef enum
 {
@@ -42,25 +45,22 @@ typedef enum
 
 struct RegDesc
 { // the register descriptor
-    const char *name;
-    char var[8];
+    string name;
+    string var;
     bool dirty; // value updated but not stored
-    /* add other fields as you need */
 };
 
 extern struct RegDesc regs[NUM_REGS];
 
-struct VarDesc
-{ // the variable descriptor
-    char var[8];
-    Register reg;
-    int offset; // the offset from stack
-    /* add other fields as you need */
-    struct VarDesc *next;
-};
+// struct VarDesc
+// { // the variable descriptor
+//     char var[8];
+//     Register reg;
+//     int offset; // the offset from stack
+// };
 
-extern struct VarDesc *vars;
+// extern struct VarDesc *vars;
 
 void mips32_gen(tac *head, FILE *_fd);
 
-#endif // MIPS_H
+#endif // MIPS_HPP

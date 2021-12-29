@@ -3,7 +3,7 @@
 
 #include "CodeGenerator.hpp"
 #include "tac.h"
-#include "mips32.h"
+#include "mips32.hpp"
 
 #define BUF_SIZE 0x10000
 
