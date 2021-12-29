@@ -108,8 +108,8 @@ public:
     }
 
     /*
-    Program: 
-      ExtDefList 
+    Program:
+      ExtDefList
     */
     void translateProgram(TreeNode *node)
     {
@@ -120,7 +120,7 @@ public:
     }
 
     /*
-    ExtDefList: 
+    ExtDefList:
       ExtDef ExtDefList
     | %empty
     */
@@ -138,7 +138,7 @@ public:
     }
 
     /*
-    ExtDef: 
+    ExtDef:
       Specifier ExtDecList SEMI
     | Specifier SEMI
     | Specifier FunDec CompSt
@@ -169,7 +169,7 @@ public:
     }
 
     /*
-    ExtDecList: 
+    ExtDecList:
       VarDec
     | VarDec COMMA ExtDecList
     */
@@ -188,7 +188,7 @@ public:
     }
 
     /*
-    Specifier: 
+    Specifier:
       TYPE
     | StructSpecifier
     */
@@ -209,7 +209,7 @@ public:
     }
 
     /*
-    StructSpecifier: 
+    StructSpecifier:
       STRUCT ID LC DefList RC
     | STRUCT ID
     */
@@ -252,7 +252,7 @@ public:
     }
 
     /*
-    FunDec: 
+    FunDec:
       ID LP VarList RP
     | ID LP RP
     */
@@ -271,7 +271,7 @@ public:
     }
 
     /*
-    VarList: 
+    VarList:
       ParamDec COMMA VarList
     | ParamDec
     */
@@ -291,7 +291,7 @@ public:
     }
 
     /*
-    ParamDec: 
+    ParamDec:
       Specifier VarDec
     */
     string translateParamDec(TreeNode *node)
@@ -312,7 +312,7 @@ public:
     }
 
     /*
-    CompSt: 
+    CompSt:
       LC DefList StmtList RC
     */
     string translateCompSt(TreeNode *node)
@@ -326,7 +326,7 @@ public:
     }
 
     /*
-    StmtList: 
+    StmtList:
       Stmt StmtList
     | %empty
     */
@@ -346,7 +346,7 @@ public:
     }
 
     /*
-    Stmt: 
+    Stmt:
       Exp SEMI
     | CompSt
     | RETURN Exp SEMI
@@ -436,7 +436,7 @@ public:
     }
 
     /*
-    DefList: 
+    DefList:
       Def DefList
     | %empty
     */
@@ -456,8 +456,8 @@ public:
     }
 
     /*
-    Def: 
-      Specifier DecList SEMI 
+    Def:
+      Specifier DecList SEMI
     */
     string translateDef(TreeNode *node)
     {
@@ -469,7 +469,7 @@ public:
     }
 
     /*
-    DecList: 
+    DecList:
       Dec
     | Dec COMMA DecList
     */
@@ -488,7 +488,7 @@ public:
     }
 
     /*
-    Dec: 
+    Dec:
       VarDec
     | VarDec ASSIGN Exp
     */
@@ -507,7 +507,7 @@ public:
     }
 
     /*
-    Exp: 
+    Exp:
       Exp ASSIGN Exp                type check
     | Exp AND Exp                   int, int -> int
     | Exp OR Exp                    int, int -> int
@@ -1058,7 +1058,7 @@ public:
     }
 
     /*
-    Args: 
+    Args:
       Exp COMMA Args
     | Exp
     */
@@ -1170,7 +1170,10 @@ void generateIntermidiateCode(char *file_path)
     }
     function_init();
     Analyser(root, p2_path).analyze();
-    Generator(root, p3_path).generate();
+    if (!has_error)
+    {
+        Generator(root, p3_path).generate();
+    }
 }
 
 #endif
