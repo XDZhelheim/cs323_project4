@@ -95,7 +95,11 @@ lex.yy.c
 
 # test result
 /test/*.out
-/test/*.cpp
+/test/*.ir
+/test/*.s
+/sample/*.out
+/sample/*.ir
+/sample/*.s
 
 temp*
 

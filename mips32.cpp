@@ -36,7 +36,7 @@ void _mips_iprintf(const char *fmt, ...)
 
 inline void alloc_var(string var)
 {
-    _mips_printf("_%s: .word 0", var.c_str());
+    _mips_iprintf("_%s: .word 0", var.c_str());
 }
 
 void gen_var_allocation()
@@ -281,108 +281,210 @@ tac *emit_goto(tac *goto_)
 
 tac *emit_iflt(tac *iflt)
 {
-    /* TODO emit function */
     Register x, y;
 
-    x = get_register(_tac_quadruple(iflt).c1);
-    y = get_register(_tac_quadruple(iflt).c2);
-    _mips_iprintf("blt %s, %s, label%d", _reg_name(x), _reg_name(y), _tac_quadruple(iflt).labelno->int_val);
+    if (_tac_quadruple(iflt).c1->kind == tac_opd::OP_CONSTANT)
+    {
+        x = get_register(_tac_quadruple(iflt).c2);
+        _mips_iprintf("blt %s, %d, label%d", _reg_name(x),
+                      _tac_quadruple(iflt).c2->int_val,
+                      _tac_quadruple(iflt).labelno->int_val);
+    }
+    else if (_tac_quadruple(iflt).c2->kind == tac_opd::OP_CONSTANT)
+    {
+        y = get_register(_tac_quadruple(iflt).c1);
+        _mips_iprintf("blt %s, %d, label%d", _reg_name(y),
+                      _tac_quadruple(iflt).c1->int_val,
+                      _tac_quadruple(iflt).labelno->int_val);
+    }
+    else
+    {
+        x = get_register(_tac_quadruple(iflt).c1);
+        y = get_register(_tac_quadruple(iflt).c2);
+        _mips_iprintf("blt %s, %s, label%d",
+                      _reg_name(x), _reg_name(y),
+                      _tac_quadruple(iflt).labelno->int_val);
+    }
 
     return iflt->next;
 }
 
 tac *emit_ifle(tac *ifle)
 {
-    /* TODO emit function */
-
     Register x, y;
 
-    x = get_register(_tac_quadruple(ifle).c1);
-    y = get_register(_tac_quadruple(ifle).c2);
-    _mips_iprintf("ble %s, %s, label%d", _reg_name(x), _reg_name(y), _tac_quadruple(ifle).labelno->int_val);
+    if (_tac_quadruple(ifle).c1->kind == tac_opd::OP_CONSTANT)
+    {
+        x = get_register(_tac_quadruple(ifle).c2);
+        _mips_iprintf("ble %s, %d, label%d", _reg_name(x),
+                      _tac_quadruple(ifle).c2->int_val,
+                      _tac_quadruple(ifle).labelno->int_val);
+    }
+    else if (_tac_quadruple(ifle).c2->kind == tac_opd::OP_CONSTANT)
+    {
+        y = get_register(_tac_quadruple(ifle).c1);
+        _mips_iprintf("ble %s, %d, label%d", _reg_name(y),
+                      _tac_quadruple(ifle).c1->int_val,
+                      _tac_quadruple(ifle).labelno->int_val);
+    }
+    else
+    {
+        x = get_register(_tac_quadruple(ifle).c1);
+        y = get_register(_tac_quadruple(ifle).c2);
+        _mips_iprintf("ble %s, %s, label%d",
+                      _reg_name(x), _reg_name(y),
+                      _tac_quadruple(ifle).labelno->int_val);
+    }
 
     return ifle->next;
 }
 
 tac *emit_ifgt(tac *ifgt)
 {
-    /* TODO emit function */
-
     Register x, y;
 
-    x = get_register(_tac_quadruple(ifgt).c1);
-    y = get_register(_tac_quadruple(ifgt).c2);
-    _mips_iprintf("bgt %s, %s, label%d", _reg_name(x), _reg_name(y), _tac_quadruple(ifgt).labelno->int_val);
+    if (_tac_quadruple(ifgt).c1->kind == tac_opd::OP_CONSTANT)
+    {
+        x = get_register(_tac_quadruple(ifgt).c2);
+        _mips_iprintf("bgt %s, %d, label%d", _reg_name(x),
+                      _tac_quadruple(ifgt).c2->int_val,
+                      _tac_quadruple(ifgt).labelno->int_val);
+    }
+    else if (_tac_quadruple(ifgt).c2->kind == tac_opd::OP_CONSTANT)
+    {
+        y = get_register(_tac_quadruple(ifgt).c1);
+        _mips_iprintf("bgt %s, %d, label%d", _reg_name(y),
+                      _tac_quadruple(ifgt).c1->int_val,
+                      _tac_quadruple(ifgt).labelno->int_val);
+    }
+    else
+    {
+        x = get_register(_tac_quadruple(ifgt).c1);
+        y = get_register(_tac_quadruple(ifgt).c2);
+        _mips_iprintf("bgt %s, %s, label%d",
+                      _reg_name(x), _reg_name(y),
+                      _tac_quadruple(ifgt).labelno->int_val);
+    }
 
     return ifgt->next;
 }
 
 tac *emit_ifge(tac *ifge)
 {
-    /* TODO emit function */
-
     Register x, y;
 
-    x = get_register(_tac_quadruple(ifge).c1);
-    y = get_register(_tac_quadruple(ifge).c2);
-    _mips_iprintf("bge %s, %s, label%d", _reg_name(x), _reg_name(y), _tac_quadruple(ifge).labelno->int_val);
+    if (_tac_quadruple(ifge).c1->kind == tac_opd::OP_CONSTANT)
+    {
+        x = get_register(_tac_quadruple(ifge).c2);
+        _mips_iprintf("bge %s, %d, label%d", _reg_name(x),
+                      _tac_quadruple(ifge).c2->int_val,
+                      _tac_quadruple(ifge).labelno->int_val);
+    }
+    else if (_tac_quadruple(ifge).c2->kind == tac_opd::OP_CONSTANT)
+    {
+        y = get_register(_tac_quadruple(ifge).c1);
+        _mips_iprintf("bge %s, %d, label%d", _reg_name(y),
+                      _tac_quadruple(ifge).c1->int_val,
+                      _tac_quadruple(ifge).labelno->int_val);
+    }
+    else
+    {
+        x = get_register(_tac_quadruple(ifge).c1);
+        y = get_register(_tac_quadruple(ifge).c2);
+        _mips_iprintf("bge %s, %s, label%d",
+                      _reg_name(x), _reg_name(y),
+                      _tac_quadruple(ifge).labelno->int_val);
+    }
 
     return ifge->next;
 }
 
 tac *emit_ifne(tac *ifne)
 {
-    /* TODO emit function */
-
     Register x, y;
 
-    x = get_register(_tac_quadruple(ifne).c1);
-    y = get_register(_tac_quadruple(ifne).c2);
-    _mips_iprintf("bne %s, %s, label%d", _reg_name(x), _reg_name(y), _tac_quadruple(ifne).labelno->int_val);
+    if (_tac_quadruple(ifne).c1->kind == tac_opd::OP_CONSTANT)
+    {
+        x = get_register(_tac_quadruple(ifne).c2);
+        _mips_iprintf("bne %s, %d, label%d", _reg_name(x),
+                      _tac_quadruple(ifne).c2->int_val,
+                      _tac_quadruple(ifne).labelno->int_val);
+    }
+    else if (_tac_quadruple(ifne).c2->kind == tac_opd::OP_CONSTANT)
+    {
+        y = get_register(_tac_quadruple(ifne).c1);
+        _mips_iprintf("bne %s, %d, label%d", _reg_name(y),
+                      _tac_quadruple(ifne).c1->int_val,
+                      _tac_quadruple(ifne).labelno->int_val);
+    }
+    else
+    {
+        x = get_register(_tac_quadruple(ifne).c1);
+        y = get_register(_tac_quadruple(ifne).c2);
+        _mips_iprintf("bne %s, %s, label%d",
+                      _reg_name(x), _reg_name(y),
+                      _tac_quadruple(ifne).labelno->int_val);
+    }
 
     return ifne->next;
 }
 
 tac *emit_ifeq(tac *ifeq)
 {
-    /* TODO emit function */
-
     Register x, y;
 
-    x = get_register(_tac_quadruple(ifeq).c1);
-    y = get_register(_tac_quadruple(ifeq).c2);
-    _mips_iprintf("beq %s, %s, label%d", _reg_name(x), _reg_name(y), _tac_quadruple(ifeq).labelno->int_val);
+    if (_tac_quadruple(ifeq).c1->kind == tac_opd::OP_CONSTANT)
+    {
+        x = get_register(_tac_quadruple(ifeq).c2);
+        _mips_iprintf("beq %s, %d, label%d", _reg_name(x),
+                      _tac_quadruple(ifeq).c2->int_val,
+                      _tac_quadruple(ifeq).labelno->int_val);
+    }
+    else if (_tac_quadruple(ifeq).c2->kind == tac_opd::OP_CONSTANT)
+    {
+        y = get_register(_tac_quadruple(ifeq).c1);
+        _mips_iprintf("beq %s, %d, label%d", _reg_name(y),
+                      _tac_quadruple(ifeq).c1->int_val,
+                      _tac_quadruple(ifeq).labelno->int_val);
+    }
+    else
+    {
+        x = get_register(_tac_quadruple(ifeq).c1);
+        y = get_register(_tac_quadruple(ifeq).c2);
+        _mips_iprintf("beq %s, %s, label%d",
+                      _reg_name(x), _reg_name(y),
+                      _tac_quadruple(ifeq).labelno->int_val);
+    }
 
     return ifeq->next;
 }
 
 tac *emit_return(tac *return_)
 {
-    /* TODO emit function */
+    // TODO emit function
     return return_->next;
 }
 
 tac *emit_arg(tac *arg)
 {
-    /* TODO emit function */
+    // TODO emit function
     return arg->next;
 }
 
 tac *emit_call(tac *call)
 {
-    /* TODO emit function */
+    // TODO emit function
     return call->next;
 }
 
 tac *emit_param(tac *param)
 {
-    /* TODO emit function */
+    // TODO emit function
     return param->next;
 }
 
 tac *emit_dec(tac *dec)
 {
-    /* NO NEED TO IMPLEMENT */
     return dec->next;
 }
 
