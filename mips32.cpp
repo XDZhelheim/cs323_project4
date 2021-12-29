@@ -34,17 +34,21 @@ void _mips_iprintf(const char *fmt, ...)
     fputs("\n", fd);
 }
 
-inline void alloc_var(string var) {
+inline void alloc_var(string var)
+{
     _mips_printf("_%s: .word 0", var.c_str());
 }
 
-void gen_var_allocation() {
-    for (auto var : vars_set) {
+void gen_var_allocation()
+{
+    for (auto var : vars_set)
+    {
         alloc_var(var);
     }
 }
 
-inline void store_var(string var) {
+inline void store_var(string var)
+{
     assert(var == regs[t0].var);
     _mips_iprintf("sw %s, _%s", var.c_str(), var.c_str());
 }

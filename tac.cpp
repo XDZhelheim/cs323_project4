@@ -54,7 +54,7 @@ char **_str_split(char *str, const char delim, int *n)
     count += last_comma < (str + strlen(str) - 1);
     *n = count;
 
-    result = (char **)malloc(sizeof(char *) * count);
+    result = (char **)malloc(sizeof(char *) * (count + 1));
     if (result)
     {
         size_t idx = 0;
