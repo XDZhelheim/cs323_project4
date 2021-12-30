@@ -46,18 +46,34 @@ void generateAssemblyCode(char *file_path)
         char *line;
         size_t s;
 
-        fscanf(fp, "%s\n", line);
-
         output = fopen(out_path.c_str(), "w");
 
-        while (getline(&line, &s, fp))
+        while (getline(&line, &s, fp) != EOF)
         {
-            fprintf(output, "%s", line);
-            if (strcmp(line, ".data\n") == 0)
-            {
-                for (auto s : vars_set)
+            if (strcmp(line, "  pushvars\n") == 0) {
+                fprintf(output, "  addi $sp, $sp, -%lu\n", vars_set.size() * 4);
+                int i = 0;
+                for (auto var : vars_set) {
+                    fprintf(output, "  lw $t3, _%s\n", var.c_str());
+                    fprintf(output, "  sw $t3, %d($sp)\n", (i++) * 4);
+                }
+            }
+            else if (strcmp(line, "  popvars\n") == 0) {
+                int i = 0;
+                for (auto var : vars_set) {
+                    fprintf(output, "  lw $t3, %d($sp)\n", (i++) * 4);
+                    fprintf(output, "  sw $t3, _%s\n", var.c_str());
+                }
+                fprintf(output, "  addi $sp, $sp, %lu\n", vars_set.size() * 4);
+            }
+            else {
+                fprintf(output, "%s", line);
+                if (strcmp(line, ".data\n") == 0)
                 {
-                    fprintf(output, "%s\n", s.c_str());
+                    for (auto s : vars_set)
+                    {
+                        fprintf(output, "_%s: .word 0\n", s.c_str());
+                    }
                 }
             }
         }

@@ -1,12 +1,40 @@
-int _add(int x, int y) {
-    int z = x + y;
-    return z;
+/*
+int _sub(int x1, int y1) {
+    int z1 = x1 - y1;
+    return z1;
+}
+
+int _add(int x2, int y2) {
+    int z2 = x2 + y2;
+    return z2;
+}
+
+int _add_add(int x3, int y3) {
+    return _add(x3, y3);
+}
+
+int goushi(int x4, int y4) {
+    return _add(x4, y4) + _sub(x4, y4);
+}
+
+int _add_add_add(int x5, int y5) {
+    return _add_add(x5, y5);
+}
+*/
+
+int fact(int n)
+{
+  if (n == 1)
+    return n;
+  else
+    return (n * fact(n-1));
 }
 
 int main() {
-    int a = 1;
-    int b = 2;
-    int c = _add(a, b);
+    int a = read();
+    int c = fact(a);
+    // int b = read();
+    // int c = _add_add_add(a, b);
     write(c);
     return 0;
 }

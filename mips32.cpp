@@ -290,14 +290,14 @@ tac *emit_iflt(tac *iflt)
     {
         x = get_register(_tac_quadruple(iflt).c2);
         _mips_iprintf("blt %s, %d, label%d", _reg_name(x),
-                      _tac_quadruple(iflt).c2->int_val,
+                      _tac_quadruple(iflt).c1->int_val,
                       _tac_quadruple(iflt).labelno->int_val);
     }
     else if (_tac_quadruple(iflt).c2->kind == tac_opd::OP_CONSTANT)
     {
         y = get_register(_tac_quadruple(iflt).c1);
         _mips_iprintf("blt %s, %d, label%d", _reg_name(y),
-                      _tac_quadruple(iflt).c1->int_val,
+                      _tac_quadruple(iflt).c2->int_val,
                       _tac_quadruple(iflt).labelno->int_val);
     }
     else
@@ -320,14 +320,14 @@ tac *emit_ifle(tac *ifle)
     {
         x = get_register(_tac_quadruple(ifle).c2);
         _mips_iprintf("ble %s, %d, label%d", _reg_name(x),
-                      _tac_quadruple(ifle).c2->int_val,
+                      _tac_quadruple(ifle).c1->int_val,
                       _tac_quadruple(ifle).labelno->int_val);
     }
     else if (_tac_quadruple(ifle).c2->kind == tac_opd::OP_CONSTANT)
     {
         y = get_register(_tac_quadruple(ifle).c1);
         _mips_iprintf("ble %s, %d, label%d", _reg_name(y),
-                      _tac_quadruple(ifle).c1->int_val,
+                      _tac_quadruple(ifle).c2->int_val,
                       _tac_quadruple(ifle).labelno->int_val);
     }
     else
@@ -350,14 +350,14 @@ tac *emit_ifgt(tac *ifgt)
     {
         x = get_register(_tac_quadruple(ifgt).c2);
         _mips_iprintf("bgt %s, %d, label%d", _reg_name(x),
-                      _tac_quadruple(ifgt).c2->int_val,
+                      _tac_quadruple(ifgt).c1->int_val,
                       _tac_quadruple(ifgt).labelno->int_val);
     }
     else if (_tac_quadruple(ifgt).c2->kind == tac_opd::OP_CONSTANT)
     {
         y = get_register(_tac_quadruple(ifgt).c1);
         _mips_iprintf("bgt %s, %d, label%d", _reg_name(y),
-                      _tac_quadruple(ifgt).c1->int_val,
+                      _tac_quadruple(ifgt).c2->int_val,
                       _tac_quadruple(ifgt).labelno->int_val);
     }
     else
@@ -380,14 +380,14 @@ tac *emit_ifge(tac *ifge)
     {
         x = get_register(_tac_quadruple(ifge).c2);
         _mips_iprintf("bge %s, %d, label%d", _reg_name(x),
-                      _tac_quadruple(ifge).c2->int_val,
+                      _tac_quadruple(ifge).c1->int_val,
                       _tac_quadruple(ifge).labelno->int_val);
     }
     else if (_tac_quadruple(ifge).c2->kind == tac_opd::OP_CONSTANT)
     {
         y = get_register(_tac_quadruple(ifge).c1);
         _mips_iprintf("bge %s, %d, label%d", _reg_name(y),
-                      _tac_quadruple(ifge).c1->int_val,
+                      _tac_quadruple(ifge).c2->int_val,
                       _tac_quadruple(ifge).labelno->int_val);
     }
     else
@@ -410,14 +410,14 @@ tac *emit_ifne(tac *ifne)
     {
         x = get_register(_tac_quadruple(ifne).c2);
         _mips_iprintf("bne %s, %d, label%d", _reg_name(x),
-                      _tac_quadruple(ifne).c2->int_val,
+                      _tac_quadruple(ifne).c1->int_val,
                       _tac_quadruple(ifne).labelno->int_val);
     }
     else if (_tac_quadruple(ifne).c2->kind == tac_opd::OP_CONSTANT)
     {
         y = get_register(_tac_quadruple(ifne).c1);
         _mips_iprintf("bne %s, %d, label%d", _reg_name(y),
-                      _tac_quadruple(ifne).c1->int_val,
+                      _tac_quadruple(ifne).c2->int_val,
                       _tac_quadruple(ifne).labelno->int_val);
     }
     else
@@ -440,14 +440,14 @@ tac *emit_ifeq(tac *ifeq)
     {
         x = get_register(_tac_quadruple(ifeq).c2);
         _mips_iprintf("beq %s, %d, label%d", _reg_name(x),
-                      _tac_quadruple(ifeq).c2->int_val,
+                      _tac_quadruple(ifeq).c1->int_val,
                       _tac_quadruple(ifeq).labelno->int_val);
     }
     else if (_tac_quadruple(ifeq).c2->kind == tac_opd::OP_CONSTANT)
     {
         y = get_register(_tac_quadruple(ifeq).c1);
         _mips_iprintf("beq %s, %d, label%d", _reg_name(y),
-                      _tac_quadruple(ifeq).c1->int_val,
+                      _tac_quadruple(ifeq).c2->int_val,
                       _tac_quadruple(ifeq).labelno->int_val);
     }
     else
@@ -472,7 +472,7 @@ tac *emit_arg(tac *arg)
         _mips_iprintf("sw $t3, 0($sp)");
     }
     else {
-        _mips_iprintf("lw $t3, %s", _tac_quadruple(arg).var->char_val);
+        _mips_iprintf("lw $t3, _%s", _tac_quadruple(arg).var->char_val);
         _mips_iprintf("sw $t3, 0($sp)");
     }
     return arg->next;
@@ -481,18 +481,38 @@ tac *emit_arg(tac *arg)
 tac *emit_call(tac *call)
 {
     // TODO call
-    _mips_iprintf("add $t4, $sp, $s0");
+    _mips_iprintf("add $t4, $sp, $s0"); // $t4 is the original $sp before push args
+
+    _mips_iprintf("add $sp, $sp, -4");
+    _mips_iprintf("sw $s0, 0($sp)"); // store $s0
+    _mips_iprintf("li $s0, 0"); // clear $s0
+
+    _mips_iprintf("addi $sp, $sp, -4"); // store $ra
+    _mips_iprintf("sw $ra, 0($sp)");
+
+    _mips_iprintf("pushvars");
     _mips_iprintf("jal %s", _tac_quadruple(call).funcname);
+    _mips_iprintf("popvars");
+
+    _mips_iprintf("lw $ra, 0($sp)"); // load $ra
+    _mips_iprintf("add $sp, $sp, 4");
+
+    _mips_iprintf("lw $s0, 0($sp)"); // load $s0
+    _mips_iprintf("add $sp, $sp, 4");
+
     _mips_iprintf("add $sp, $sp, $s0"); // pop args
+
+    vars_set.insert(_tac_quadruple(call).ret->char_val);
+    _mips_iprintf("sw $v0, _%s", _tac_quadruple(call).ret->char_val);
     return call->next;
 }
 
 tac *emit_param(tac *param)
 {
     // TODO param
+    _mips_iprintf("addi $t4, $t4, -4");
     _mips_iprintf("lw $t3, 0($t4)");
     _mips_iprintf("sw $t3, _%s", _tac_quadruple(param).p->char_val);
-    _mips_iprintf("addi $t4, $t4, -4");
     vars_set.insert(_tac_quadruple(param).p->char_val);
     return param->next;
 }
@@ -500,13 +520,11 @@ tac *emit_param(tac *param)
 tac *emit_return(tac *return_)
 {
     // TODO return
-    _mips_iprintf("lw $ra, 0($sp)");
-    _mips_iprintf("addi $sp, $sp, 4"); // pop $ra
     if (_tac_quadruple(return_).var->kind == tac_opd::OP_CONSTANT) {
-        _mips_iprintf("lw $v0, _%d", _tac_quadruple(return_).var->int_val);
+        _mips_iprintf("li $v0, %d", _tac_quadruple(return_).var->int_val);
     }
     else {
-        _mips_iprintf("li $v0, %s", _tac_quadruple(return_).var->char_val);
+        _mips_iprintf("lw $v0, _%s", _tac_quadruple(return_).var->char_val);
     }
     _mips_iprintf("jr $ra");
     return return_->next;
@@ -520,6 +538,7 @@ tac *emit_dec(tac *dec)
 tac *emit_read(tac *read)
 {
     Register x = get_register(_tac_quadruple(read).p);
+    vars_set.insert(_tac_quadruple(read).p->char_val);
 
     _mips_iprintf("addi $sp, $sp, -4");
     _mips_iprintf("sw $ra, 0($sp)");
@@ -527,6 +546,8 @@ tac *emit_read(tac *read)
     _mips_iprintf("lw $ra, 0($sp)");
     _mips_iprintf("addi $sp, $sp, 4");
     _mips_iprintf("move %s, $v0", _reg_name(x));
+
+    _mips_iprintf("sw %s, _%s", _reg_name(x), _tac_quadruple(read).p->char_val);
     return read->next;
 }
 
@@ -645,6 +666,4 @@ void mips32_gen(tac *head, FILE *_fd)
     // vars->next = NULL;
     fd = _fd;
     emit_code(head);
-
-    emit_var_allocation();
 }
