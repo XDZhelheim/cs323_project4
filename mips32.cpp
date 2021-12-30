@@ -81,11 +81,6 @@ Register get_register_w(tac_opd *opd)
     return t0;
 }
 
-void spill_register(Register reg)
-{
-    // TODO spill reg
-}
-
 /* PARAM: a pointer to `struct tac_node` instance
    RETURN: the next instruction to be translated */
 tac *emit_label(tac *label)
@@ -464,7 +459,6 @@ tac *emit_ifeq(tac *ifeq)
 
 tac *emit_arg(tac *arg)
 {
-    // TODO arg
     _mips_iprintf("addi $sp, $sp -4");
     _mips_iprintf("addi $s0, $s0, 4");
     if (_tac_quadruple(arg).var->kind == tac_opd::OP_CONSTANT) {
@@ -480,7 +474,6 @@ tac *emit_arg(tac *arg)
 
 tac *emit_call(tac *call)
 {
-    // TODO call
     _mips_iprintf("move $t4, $sp"); // $t4 is the $sp after push args
 
     _mips_iprintf("addi $sp, $sp, -4");
@@ -511,7 +504,6 @@ tac *emit_call(tac *call)
 
 tac *emit_param(tac *param)
 {
-    // TODO param
     _mips_iprintf("lw $t3, 0($t4)");
     _mips_iprintf("sw $t3, _%s", _tac_quadruple(param).p->char_val);
     _mips_iprintf("addi $t4, $t4, 4");
@@ -521,7 +513,6 @@ tac *emit_param(tac *param)
 
 tac *emit_return(tac *return_)
 {
-    // TODO return
     if (_tac_quadruple(return_).var->kind == tac_opd::OP_CONSTANT) {
         _mips_iprintf("li $v0, %d", _tac_quadruple(return_).var->int_val);
     }
