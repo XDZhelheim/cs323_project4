@@ -1,4 +1,4 @@
-int add(int x, int y) {
+int _add(int x, int y) {
     int z = x + y;
     return z;
 }
@@ -6,7 +6,7 @@ int add(int x, int y) {
 int main() {
     int a = 1;
     int b = 2;
-    int c = add(x, y);
+    int c = _add(a, b);
     write(c);
     return 0;
 }

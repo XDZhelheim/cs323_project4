@@ -1,11 +1,8 @@
 #include "mips32.hpp"
-#include <set>
 
 #define _tac_kind(tac) (((tac)->code).kind)
 #define _tac_quadruple(tac) (((tac)->code).tac)
 #define _reg_name(reg) regs[reg].name.c_str()
-
-using std::set;
 
 /* the output file descriptor, may not be explicitly used */
 FILE *fd;
@@ -496,6 +493,7 @@ tac *emit_param(tac *param)
     _mips_iprintf("lw $t3, 0($t4)");
     _mips_iprintf("sw $t3, _%s", _tac_quadruple(param).p->char_val);
     _mips_iprintf("addi $t4, $t4, -4");
+    vars_set.insert(_tac_quadruple(param).p->char_val);
     return param->next;
 }
 
@@ -505,10 +503,10 @@ tac *emit_return(tac *return_)
     _mips_iprintf("lw $ra, 0($sp)");
     _mips_iprintf("addi $sp, $sp, 4"); // pop $ra
     if (_tac_quadruple(return_).var->kind == tac_opd::OP_CONSTANT) {
-        _mips_iprintf("lw $v0, _%s", _tac_quadruple(return_).var->char_val);
+        _mips_iprintf("lw $v0, _%d", _tac_quadruple(return_).var->int_val);
     }
     else {
-        _mips_iprintf("li $v0, %d", _tac_quadruple(return_).var->int_val);
+        _mips_iprintf("li $v0, %s", _tac_quadruple(return_).var->char_val);
     }
     _mips_iprintf("jr $ra");
     return return_->next;

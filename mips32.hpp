@@ -3,8 +3,10 @@
 
 #include "tac.h"
 #include <string>
+#include <set>
 
 using std::string;
+using std::set;
 
 typedef enum
 {
@@ -62,5 +64,7 @@ extern struct RegDesc regs[NUM_REGS];
 // extern struct VarDesc *vars;
 
 void mips32_gen(tac *head, FILE *_fd);
+
+extern set<string> vars_set;
 
 #endif // MIPS_HPP
