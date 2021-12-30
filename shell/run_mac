@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ ! -e bin ]
+then
+    make || exit
+    make trash || exit
+fi
+
+bin/splc test/test_4_r0"$1".spl || exit
+echo -e "\033[36m----running spim----\033[0m"
+spim -file test/test_4_r0"$1".s

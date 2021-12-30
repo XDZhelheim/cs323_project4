@@ -39,8 +39,9 @@ inline void alloc_var(string var)
     _mips_iprintf("_%s: .word 0", var.c_str());
 }
 
-void gen_var_allocation()
+void emit_var_allocation()
 {
+    _mips_printf(".data");
     for (auto var : vars_set)
     {
         alloc_var(var);
@@ -50,7 +51,11 @@ void gen_var_allocation()
 inline void store_var(string var)
 {
     assert(var == regs[t0].var);
-    _mips_iprintf("sw %s, _%s", var.c_str(), var.c_str());
+    _mips_iprintf("sw $t0, _%s", var.c_str());
+}
+
+inline void load_var(string var, Register reg) {
+    _mips_iprintf("lw %s, _%s", _reg_name(reg), var.c_str());
 }
 
 Register get_register(tac_opd *opd)
@@ -62,6 +67,7 @@ Register get_register(tac_opd *opd)
     flag = !flag;
     Register r = flag ? t1 : t2;
     regs[r].var = var;
+    load_var(var, r);
 
     return r;
 }
@@ -616,4 +622,6 @@ void mips32_gen(tac *head, FILE *_fd)
     // vars->next = NULL;
     fd = _fd;
     emit_code(head);
+
+    emit_var_allocation();
 }
