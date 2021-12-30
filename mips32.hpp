@@ -54,15 +54,6 @@ struct RegDesc
 
 extern struct RegDesc regs[NUM_REGS];
 
-// struct VarDesc
-// { // the variable descriptor
-//     char var[8];
-//     Register reg;
-//     int offset; // the offset from stack
-// };
-
-// extern struct VarDesc *vars;
-
 void mips32_gen(tac *head, FILE *_fd);
 
 extern set<string> vars_set;

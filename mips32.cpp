@@ -31,20 +31,6 @@ void _mips_iprintf(const char *fmt, ...)
     fputs("\n", fd);
 }
 
-inline void alloc_var(string var)
-{
-    _mips_iprintf("_%s: .word 0", var.c_str());
-}
-
-void emit_var_allocation()
-{
-    _mips_printf(".data");
-    for (auto var : vars_set)
-    {
-        alloc_var(var);
-    }
-}
-
 inline void store_var(string var)
 {
     assert(var == regs[t0].var);
@@ -660,8 +646,7 @@ void mips32_gen(tac *head, FILE *_fd)
     regs[sp].name = "$sp";
     regs[fp].name = "$fp";
     regs[ra].name = "$ra";
-    // vars = (struct VarDesc *)malloc(sizeof(struct VarDesc));
-    // vars->next = NULL;
+    
     fd = _fd;
     emit_code(head);
 }
