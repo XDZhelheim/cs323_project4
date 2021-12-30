@@ -22,7 +22,7 @@ void generateAssemblyCode(char *file_path)
         {
             out_path = path.substr(0, path.length() - 4) + ".s";
         }
-        FILE *fp;
+        FILE *fp, *output;
         tac *head;
         char c;
         int size, len;
@@ -36,9 +36,34 @@ void generateAssemblyCode(char *file_path)
         fclose(fp);
 
         // write the target code
-        fp = fopen(out_path.c_str(), "w");
+        fp = tmpfile();
         head = tac_from_buffer(buf);
         mips32_gen(head, fp);
+
+        fflush(fp);
+        fseek(fp, 0, SEEK_SET);
+
+        char *line;
+        size_t s;
+
+        fscanf(fp, "%s\n", line);
+
+        output = fopen(out_path.c_str(), "w");
+
+        while (getline(&line, &s, fp))
+        {
+            fprintf(output, "%s", line);
+            if (strcmp(line, ".data\n") == 0)
+            {
+                for (auto s : vars_set)
+                {
+                    fprintf(output, "%s\n", s.c_str());
+                }
+            }
+        }
+
+        fflush(output);
+        fclose(output);
         fclose(fp);
     }
 }
