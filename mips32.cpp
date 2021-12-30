@@ -51,7 +51,8 @@ inline void store_var(string var)
     _mips_iprintf("sw $t0, _%s", var.c_str());
 }
 
-inline void load_var(string var, Register reg) {
+inline void load_var(string var, Register reg)
+{
     _mips_iprintf("lw %s, _%s", _reg_name(reg), var.c_str());
 }
 
@@ -461,11 +462,13 @@ tac *emit_arg(tac *arg)
 {
     _mips_iprintf("addi $sp, $sp -4");
     _mips_iprintf("addi $s0, $s0, 4");
-    if (_tac_quadruple(arg).var->kind == tac_opd::OP_CONSTANT) {
+    if (_tac_quadruple(arg).var->kind == tac_opd::OP_CONSTANT)
+    {
         _mips_iprintf("li $t3, %d", _tac_quadruple(arg).var->int_val);
         _mips_iprintf("sw $t3, 0($sp)");
     }
-    else {
+    else
+    {
         _mips_iprintf("lw $t3, _%s", _tac_quadruple(arg).var->char_val);
         _mips_iprintf("sw $t3, 0($sp)");
     }
@@ -478,7 +481,7 @@ tac *emit_call(tac *call)
 
     _mips_iprintf("addi $sp, $sp, -4");
     _mips_iprintf("sw $s0, 0($sp)"); // store $s0
-    _mips_iprintf("li $s0, 0"); // clear $s0
+    _mips_iprintf("li $s0, 0");      // clear $s0
 
     _mips_iprintf("addi $sp, $sp, -4"); // store $ra
     _mips_iprintf("sw $ra, 0($sp)");
@@ -513,10 +516,12 @@ tac *emit_param(tac *param)
 
 tac *emit_return(tac *return_)
 {
-    if (_tac_quadruple(return_).var->kind == tac_opd::OP_CONSTANT) {
+    if (_tac_quadruple(return_).var->kind == tac_opd::OP_CONSTANT)
+    {
         _mips_iprintf("li $v0, %d", _tac_quadruple(return_).var->int_val);
     }
-    else {
+    else
+    {
         _mips_iprintf("lw $v0, _%s", _tac_quadruple(return_).var->char_val);
     }
     _mips_iprintf("jr $ra");

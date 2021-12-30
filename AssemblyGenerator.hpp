@@ -43,30 +43,35 @@ void generateAssemblyCode(char *file_path)
         fflush(fp);
         fseek(fp, 0, SEEK_SET);
 
-        char *line;
+        char *line = (char *)malloc(1024);
         size_t s;
 
         output = fopen(out_path.c_str(), "w");
 
         while (getline(&line, &s, fp) != EOF)
         {
-            if (strcmp(line, "  pushvars\n") == 0) {
+            if (strcmp(line, "  pushvars\n") == 0)
+            {
                 fprintf(output, "  addi $sp, $sp, -%lu\n", vars_set.size() * 4);
                 int i = 0;
-                for (auto var : vars_set) {
+                for (auto var : vars_set)
+                {
                     fprintf(output, "  lw $t3, _%s\n", var.c_str());
                     fprintf(output, "  sw $t3, %d($sp)\n", (i++) * 4);
                 }
             }
-            else if (strcmp(line, "  popvars\n") == 0) {
+            else if (strcmp(line, "  popvars\n") == 0)
+            {
                 int i = 0;
-                for (auto var : vars_set) {
+                for (auto var : vars_set)
+                {
                     fprintf(output, "  lw $t3, %d($sp)\n", (i++) * 4);
                     fprintf(output, "  sw $t3, _%s\n", var.c_str());
                 }
                 fprintf(output, "  addi $sp, $sp, %lu\n", vars_set.size() * 4);
             }
-            else {
+            else
+            {
                 fprintf(output, "%s", line);
                 if (strcmp(line, ".data\n") == 0)
                 {
@@ -77,6 +82,8 @@ void generateAssemblyCode(char *file_path)
                 }
             }
         }
+
+        delete[] line;
 
         fflush(output);
         fclose(output);

@@ -5,8 +5,8 @@
 #include <string>
 #include <set>
 
-using std::string;
 using std::set;
+using std::string;
 
 typedef enum
 {
