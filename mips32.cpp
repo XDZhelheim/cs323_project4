@@ -465,28 +465,53 @@ tac *emit_ifeq(tac *ifeq)
     return ifeq->next;
 }
 
-tac *emit_return(tac *return_)
-{
-    // TODO emit function
-    return return_->next;
-}
-
 tac *emit_arg(tac *arg)
 {
-    // TODO emit function
+    // TODO arg
+    _mips_iprintf("addi $sp, $sp -4");
+    _mips_iprintf("addi $s0, $s0, 4");
+    if (_tac_quadruple(arg).var->kind == tac_opd::OP_CONSTANT) {
+        _mips_iprintf("li $t3, %d", _tac_quadruple(arg).var->int_val);
+        _mips_iprintf("sw $t3, 0($sp)");
+    }
+    else {
+        _mips_iprintf("lw $t3, %s", _tac_quadruple(arg).var->char_val);
+        _mips_iprintf("sw $t3, 0($sp)");
+    }
     return arg->next;
 }
 
 tac *emit_call(tac *call)
 {
-    // TODO emit function
+    // TODO call
+    _mips_iprintf("add $t4, $sp, $s0");
+    _mips_iprintf("jal %s", _tac_quadruple(call).funcname);
+    _mips_iprintf("add $sp, $sp, $s0"); // pop args
     return call->next;
 }
 
 tac *emit_param(tac *param)
 {
-    // TODO emit function
+    // TODO param
+    _mips_iprintf("lw $t3, 0($t4)");
+    _mips_iprintf("sw $t3, _%s", _tac_quadruple(param).p->char_val);
+    _mips_iprintf("addi $t4, $t4, -4");
     return param->next;
+}
+
+tac *emit_return(tac *return_)
+{
+    // TODO return
+    _mips_iprintf("lw $ra, 0($sp)");
+    _mips_iprintf("addi $sp, $sp, 4"); // pop $ra
+    if (_tac_quadruple(return_).var->kind == tac_opd::OP_CONSTANT) {
+        _mips_iprintf("lw $v0, _%s", _tac_quadruple(return_).var->char_val);
+    }
+    else {
+        _mips_iprintf("li $v0, %d", _tac_quadruple(return_).var->int_val);
+    }
+    _mips_iprintf("jr $ra");
+    return return_->next;
 }
 
 tac *emit_dec(tac *dec)

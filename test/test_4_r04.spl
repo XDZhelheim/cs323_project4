@@ -1,0 +1,12 @@
+int add(int x, int y) {
+    int z = x + y;
+    return z;
+}
+
+int main() {
+    int a = 1;
+    int b = 2;
+    int c = add(x, y);
+    write(c);
+    return 0;
+}
