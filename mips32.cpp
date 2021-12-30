@@ -481,9 +481,9 @@ tac *emit_arg(tac *arg)
 tac *emit_call(tac *call)
 {
     // TODO call
-    _mips_iprintf("add $t4, $sp, $s0"); // $t4 is the original $sp before push args
+    _mips_iprintf("move $t4, $sp"); // $t4 is the $sp after push args
 
-    _mips_iprintf("add $sp, $sp, -4");
+    _mips_iprintf("addi $sp, $sp, -4");
     _mips_iprintf("sw $s0, 0($sp)"); // store $s0
     _mips_iprintf("li $s0, 0"); // clear $s0
 
@@ -495,12 +495,14 @@ tac *emit_call(tac *call)
     _mips_iprintf("popvars");
 
     _mips_iprintf("lw $ra, 0($sp)"); // load $ra
-    _mips_iprintf("add $sp, $sp, 4");
+    _mips_iprintf("addi $sp, $sp, 4");
 
     _mips_iprintf("lw $s0, 0($sp)"); // load $s0
-    _mips_iprintf("add $sp, $sp, 4");
+    _mips_iprintf("addi $sp, $sp, 4");
 
     _mips_iprintf("add $sp, $sp, $s0"); // pop args
+
+    _mips_iprintf("li $s0, 0"); // clear $s0
 
     vars_set.insert(_tac_quadruple(call).ret->char_val);
     _mips_iprintf("sw $v0, _%s", _tac_quadruple(call).ret->char_val);
@@ -510,9 +512,9 @@ tac *emit_call(tac *call)
 tac *emit_param(tac *param)
 {
     // TODO param
-    _mips_iprintf("addi $t4, $t4, -4");
     _mips_iprintf("lw $t3, 0($t4)");
     _mips_iprintf("sw $t3, _%s", _tac_quadruple(param).p->char_val);
+    _mips_iprintf("addi $t4, $t4, 4");
     vars_set.insert(_tac_quadruple(param).p->char_val);
     return param->next;
 }
